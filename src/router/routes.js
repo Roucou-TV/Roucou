@@ -1,83 +1,29 @@
-import store from '@/state/store'
+import store from "@/state/store";
 
 export default [
   {
-    path: '/',
-    name: 'default',
+    path: "/",
+    name: "default",
     meta: {
-      authRequired: true,
+      authRequired: false // a changer en cas de mise en production
     },
-    component: () => import('./views/dashboards/default'),
+    component: () => import("./views/home/index")
   },
   {
-    path: '/login',
-    name: 'login',
-    component: () => import('./views/account/login'),
+    path: "/login",
+    name: "login",
+    component: () => import("./views/account/login"),
     meta: {
       beforeResolve(routeTo, routeFrom, next) {
         // If the user is already logged in
-        if (store.getters['auth/loggedIn']) {
+        if (store.getters["auth/loggedIn"]) {
           // Redirect to the home page instead
-          next({ name: 'default' })
+          next({ name: "default" });
         } else {
           // Continue to the login page
-          next()
+          next();
         }
-      },
-    },
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: () => import('./views/account/register'),
-    meta: {
-      beforeResolve(routeTo, routeFrom, next) {
-        // If the user is already logged in
-        if (store.getters['auth/loggedIn']) {
-          // Redirect to the home page instead
-          next({ name: 'default' })
-        } else {
-          // Continue to the login page
-          next()
-        }
-      },
-    },
-  },
-  {
-    path: '/forgot-password',
-    name: 'Forgot password',
-    component: () => import('./views/account/forgot-password'),
-    meta: {
-      beforeResolve(routeTo, routeFrom, next) {
-        // If the user is already logged in
-        if (store.getters['auth/loggedIn']) {
-          // Redirect to the home page instead
-          next({ name: 'default' })
-        } else {
-          // Continue to the login page
-          next()
-        }
-      },
-    },
-  },
-  {
-    path: '/logout',
-    name: 'logout',
-    meta: {
-      authRequired: true,
-      beforeResolve(routeTo, routeFrom, next) {
-        if (process.env.VUE_APP_DEFAULT_AUTH === "firebase") {
-          store.dispatch('auth/logOut')
-        } else {
-          store.dispatch('authfack/logout')
-        }
-        const authRequiredOnPreviousRoute = routeFrom.matched.some(
-          (route) => route.push('/login')
-        )
-        // Navigate back to previous page, or home as a fallback
-        next(authRequiredOnPreviousRoute ? { name: 'default' } : { ...routeFrom })
-      },
-    },
+      }
+    }
   }
-
-]
+];

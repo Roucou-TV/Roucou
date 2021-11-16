@@ -2,7 +2,6 @@ import firebase from "firebase/app"
 import "firebase/auth"
 import "firebase/firestore"
 import "firebase/storage"
-import "firebase/messaging"
 
 let fb = null
 var fire = null
@@ -20,7 +19,8 @@ const firebaseConfig = {
 if (!fb) {
   fb = firebase.initializeApp(firebaseConfig)
 }
-//Ce code sera a essayé apres, mais il marche
+// Ce code sera a essayé apres, mais il marche
+
 // if (process.env.NODE_ENV == "development") {
 //   console.log("Development on localhost, use Emulator");
 //   fire = fb.firestore().settings({ host: "localhost:7000", ssl: false });
@@ -42,4 +42,3 @@ fb.firestore()
 export const firestore = fire ?? fb.firestore()
 export const storage = fb.storage()
 export const auth = fb.auth()
-export const messaging = fb.messaging()

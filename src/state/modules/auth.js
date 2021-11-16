@@ -1,5 +1,3 @@
-import { getFirebaseBackend } from '../../authUtils.js'
-
 export const state = {
     currentUser: sessionStorage.getItem('authUser'),
 }

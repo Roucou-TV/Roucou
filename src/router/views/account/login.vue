@@ -1,221 +1,174 @@
+
+<template>
+	<Layout>
+		<b-row align-h="center">
+			<b-col md="8" lg="6" xl="5">
+				<b-card no-body class="overflow-hidden">
+					<div class="bg-soft-primary">
+						<b-row>
+							<b-col cols="7">
+								<div class="text-primary p-3">
+									<h5 class="text-primary">
+										Bienvenue !
+									</h5>
+									<p>
+										Connectez-vous pour
+										acceder a Madia
+									</p>
+								</div>
+							</b-col>
+							<b-col cols="5" align-self="end">
+								<img src="@/assets/images/profile-img.png" alt class="img-fluid" />
+							</b-col>
+						</b-row>
+					</div>
+					<div class="card-body pt-0">
+						<div>
+							<router-link to="/">
+								<div class="avatar-md profile-user-wid mb-4">
+									<span class="avatar-title rounded-circle bg-light">
+										<img src="@/assets/images/logo.svg" alt height="34" />
+									</span>
+								</div>
+							</router-link>
+						</div>
+
+						<b-form class="p-2" @submit.prevent="connecter">
+							<b-form-group id="input-group-1" label="Email" label-for="input-1">
+								<b-form-input id="emaily" name="username" autocomplete="false" v-model="user.email" type="text" placeholder="Entrer l'email"></b-form-input>
+							</b-form-group>
+
+							<b-form-group id="input-group-2" label="Mot de passe" label-for="input-2">
+								<b-form-input id="pass" name="password" v-model="user.password" type="password" placeholder="Entrer le mot de passe" autocomplete="current-password"></b-form-input>
+							</b-form-group>
+
+							<div class="mt-3">
+								<b-row>
+									<b-button v-if="tryingToLogIn" type="submit" variant="primary" block>Se connecter</b-button>
+									<button class="btn btn-primary btn-block" type="button" v-else disabled>
+										<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+										Veuillez patienter...
+									</button>
+								</b-row>
+							</div>
+							<b-row align-content="center" align-h="center">
+								<b-form-invalid-feedback :state="autherror==null" class="pt-2 text-center">
+									{{error}}
+								</b-form-invalid-feedback>
+							</b-row>
+							<div class="mt-4 text-center">
+								<router-link to="/forgot-password" class="text-muted">
+									<i class="mdi mdi-lock mr-1"></i>
+									Mot de passe oublié?
+								</router-link>
+							</div>
+						</b-form>
+					</div>
+					<!-- end card-body -->
+				</b-card>
+				<!-- end card -->
+				<div class="mt-5 text-center">
+					<p>
+						©
+						{{ new Date().getFullYear() }}
+						Madia. Crafted with
+						<i class="mdi mdi-heart text-danger"></i>
+						by Din Technology
+					</p>
+				</div>
+				<!-- end row -->
+			</b-col>
+			<!-- end col -->
+		</b-row>
+		<!-- end row -->
+	</Layout>
+</template>
 <script>
-import Layout from "../../layouts/auth";
-import {
-  authMethods,
-  authFackMethods,
-  notificationMethods
-} from "@/state/helpers";
-import { mapState } from "vuex";
-
+import Layout from "@/router/layouts/auth";
 import appConfig from "@/app.config";
-import { required, email } from "vuelidate/lib/validators";
-
-/**
- * Login component
- */
+import { mapState, mapActions } from "vuex";
+import store from "@/state/store";
+import { auth } from "@/firebase/firebase";
 export default {
-  page: {
-    title: "Login",
-    meta: [{ name: "description", content: appConfig.description }]
-  },
-  components: { Layout },
-  data() {
-    return {
-      email: "admin@themesbrand.com",
-      password: "123456",
-      submitted: false,
-      authError: null,
-      tryingToLogIn: false,
-      isAuthError: false
-    };
-  },
-  validations: {
-    email: { required, email },
-    password: { required }
-  },
-  computed: {
-    ...mapState("authfack", ["status"]),
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    }
-  },
-  methods: {
-    ...authMethods,
-    ...authFackMethods,
-    ...notificationMethods,
-    // Try to log the user in with the username
-    // and password they provided.
-    tryToLogIn() {
-      this.submitted = true;
-      // stop here if form is invalid
-      this.$v.$touch();
+	page: {
+		title: "Login",
+		meta: [{ name: "description", content: appConfig.description }],
+	},
+	components: { Layout },
+	data() {
+		return {
+			formIsvalid: true,
+			user: {
+				email: "",
+				password: "",
+			},
+			submitted: false,
+			authError: null,
+			tryingToLogIn: true,
+			error: null,
+		};
+	},
 
-      if (this.$v.$invalid) {
-        return;
-      } else {
-        if (process.env.VUE_APP_DEFAULT_AUTH === "firebase") {
-          this.tryingToLogIn = true;
-          // Reset the authError if it existed.
-          this.authError = null;
-          return (
-            this.logIn({
-              email: this.email,
-              password: this.password
-            })
-              // eslint-disable-next-line no-unused-vars
-              .then(token => {
-                this.tryingToLogIn = false;
-                this.isAuthError = false;
-                // Redirect to the originally requested page, or to the home page
-                this.$router.push(
-                  this.$route.query.redirectFrom || { name: "default" }
-                );
-              })
-              .catch(error => {
-                this.tryingToLogIn = false;
-                this.authError = error ? error : "";
-                this.isAuthError = true;
-              })
-          );
-        } else {
-          const { email, password } = this;
-          if (email && password) {
-            this.login({ email, password });
-          }
-        }
-      }
-    }
-  }
+	computed: {
+		...mapState({
+			message: (state) => state.notification.message,
+			type: (state) => state.notification.type,
+			autherror: (state) => state.auth.error,
+		}),
+	},
+	watch: {
+		autherror(newError, oldError) {
+			// if (newError != null && oldError != null) {
+			if (newError != oldError) {
+				this.error = newError.message;
+				// this.$toasted.show(newError.message, {
+				// 	type: "error",
+				// 	duration: 100000,
+				// 	singleton: true,
+				// });
+			}
+			// }
+		},
+	},
+	methods: {
+		...mapActions("auth", ["login", "signOut"]),
+		...mapActions("restaurant", ["test"]),
+		validateState(ref) {
+			if (
+				this.veeFields[ref] &&
+				(this.veeFields[ref].dirty || this.veeFields[ref].validated)
+			) {
+				return !this.veeErrors.has(ref);
+			}
+			return null;
+		},
+		async connecter() {
+			// this.tryingToLogIn = !this.tryingToLogIn;
+			// try {
+			// 	var loginResponse = await this.login(this.user);
+			// 	this.tryingToLogIn = !this.tryingToLogIn;
+			// 	if (loginResponse !== "error-type") {
+			// 		console.log({ loginResponse });
+			this.$router.push('/');
+			// 	}
+			// } catch (error) {
+			// 	console.log(error.stack);
+			// 	this.$router.push({ name: "error" });
+			// 	this.$toasted.show(error.message, { type: "error" });
+			// 	this.tryingToLogIn = !this.tryingToLogIn;
+			// }
+		},
+	},
 };
 </script>
 
-<template>
-  <Layout>
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6 col-xl-5">
-        <div class="card overflow-hidden">
-          <div class="bg-soft-primary">
-            <div class="row">
-              <div class="col-7">
-                <div class="text-primary p-4">
-                  <h5 class="text-primary">Welcome Back !</h5>
-                  <p>Sign in to continue to Skote.</p>
-                </div>
-              </div>
-              <div class="col-5 align-self-end">
-                <img src="@/assets/images/profile-img.png" alt class="img-fluid" />
-              </div>
-            </div>
-          </div>
-          <div class="card-body pt-0">
-            <div>
-              <router-link tag="a" to="/">
-                <div class="avatar-md profile-user-wid mb-4">
-                  <span class="avatar-title rounded-circle bg-light">
-                    <img src="@/assets/images/logo.svg" alt height="34" />
-                  </span>
-                </div>
-              </router-link>
-            </div>
-            <b-alert v-model="isAuthError" variant="danger" class="mt-3" dismissible>{{authError}}</b-alert>
 
-            <div
-              v-if="notification.message"
-              :class="'alert ' + notification.type"
-            >{{notification.message}}</div>
-
-            <b-form class="p-2" @submit.prevent="tryToLogIn">
-              <b-form-group id="input-group-1" label="Email" label-for="input-1">
-                <b-form-input
-                  id="input-1"
-                  v-model="email"
-                  type="text"
-                  placeholder="Enter email"
-                  :class="{ 'is-invalid': submitted && $v.email.$error }"
-                ></b-form-input>
-                <div v-if="submitted && $v.email.$error" class="invalid-feedback">
-                  <span v-if="!$v.email.required">Email is required.</span>
-                  <span v-if="!$v.email.email">Please enter valid email.</span>
-                </div>
-              </b-form-group>
-
-              <b-form-group id="input-group-2" label="Password" label-for="input-2">
-                <b-form-input
-                  id="input-2"
-                  v-model="password"
-                  type="password"
-                  placeholder="Enter password"
-                  :class="{ 'is-invalid': submitted && $v.password.$error }"
-                ></b-form-input>
-                <div
-                  v-if="submitted && !$v.password.required"
-                  class="invalid-feedback"
-                >Password is required.</div>
-              </b-form-group>
-              <div class="custom-control custom-checkbox">
-                <input id="customControlInline" type="checkbox" class="custom-control-input" />
-                <label class="custom-control-label" for="customControlInline">Remember me</label>
-              </div>
-              <div class="mt-3">
-                <b-button type="submit" variant="primary" class="btn-block">Log In</b-button>
-              </div>
-              <div class="mt-4 text-center">
-                <h5 class="font-size-14 mb-3">Sign in with</h5>
-
-                <ul class="list-inline">
-                  <li class="list-inline-item">
-                    <a
-                      href="javascript: void(0);"
-                      class="social-list-item bg-primary text-white border-primary"
-                    >
-                      <i class="mdi mdi-facebook"></i>
-                    </a>
-                  </li>
-                  <li class="list-inline-item">
-                    <a
-                      href="javascript: void(0);"
-                      class="social-list-item bg-info text-white border-info"
-                    >
-                      <i class="mdi mdi-twitter"></i>
-                    </a>
-                  </li>
-                  <li class="list-inline-item">
-                    <a
-                      href="javascript: void(0);"
-                      class="social-list-item bg-danger text-white border-danger"
-                    >
-                      <i class="mdi mdi-google"></i>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div class="mt-4 text-center">
-                <router-link tag="a" to="/forgot-password" class="text-muted">
-                  <i class="mdi mdi-lock mr-1"></i> Forgot your password?
-                </router-link>
-              </div>
-            </b-form>
-          </div>
-          <!-- end card-body -->
-        </div>
-        <!-- end card -->
-
-        <div class="mt-5 text-center">
-          <p>
-            Don't have an account ?
-            <router-link tag="a" to="/register" class="font-weight-medium text-primary">Signup now</router-link>
-          </p>
-          <p>
-            © {{new Date().getFullYear()}} Skote. Crafted with
-            <i class="mdi mdi-heart text-danger"></i> by Themesbrand
-          </p>
-        </div>
-        <!-- end row -->
-      </div>
-      <!-- end col -->
-    </div>
-    <!-- end row -->
-  </Layout>
-</template>
-
-<style lang="scss" module></style>
+<style>
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 1s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+	opacity: 0;
+}
+</style>

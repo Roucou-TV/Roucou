@@ -1,13 +1,10 @@
 <script>
 import {
   authMethods,
-  authFackMethods,
-  notificationMethods
 } from "@/state/helpers";
 import Layout from "../../layouts/auth";
 import appConfig from "@/app.config";
 import { mapState } from "vuex";
-
 import { required, email } from "vuelidate/lib/validators";
 
 /**
@@ -38,58 +35,10 @@ export default {
   },
   computed: {
     ...mapState("authfack", ["status"]),
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    }
+
   },
   methods: {
     ...authMethods,
-    ...authFackMethods,
-    ...notificationMethods,
-    // Try to register the user in with the email, username
-    // and password they provided.
-    tryToRegisterIn() {
-      this.submitted = true;
-      // stop here if form is invalid
-      this.$v.$touch();
-
-      if (this.$v.$invalid) {
-        return;
-      } else {
-        if (process.env.VUE_APP_DEFAULT_AUTH === "firebase") {
-          this.tryingToRegister = true;
-          // Reset the regError if it existed.
-          this.regError = null;
-          return (
-            this.register({
-              email: this.user.email,
-              password: this.user.password
-            })
-              // eslint-disable-next-line no-unused-vars
-              .then(token => {
-                this.tryingToRegister = false;
-                this.isRegisterError = false;
-                this.registerSuccess = true;
-                if (this.registerSuccess) {
-                  this.$router.push(
-                    this.$route.query.redirectFrom || { name: "default" }
-                  );
-                }
-              })
-              .catch(error => {
-                this.tryingToRegister = false;
-                this.regError = error ? error : "";
-                this.isRegisterError = true;
-              })
-          );
-        } else {
-          const { email, username, password } = this.user;
-          if (email && username && password) {
-            this.registeruser(this.user);
-          }
-        }
-      }
-    }
   }
 };
 </script>
