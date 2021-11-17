@@ -3,11 +3,29 @@ import store from "@/state/store";
 export default [
   {
     path: "/",
-    name: "default",
+    alias: "/categorys",
+    name: "category",
     meta: {
       authRequired: false // a changer en cas de mise en production
     },
-    component: () => import("./views/home/index")
+    component: () => import("./views/category/index")
+  },
+  {
+    path: "/colors",
+    name: "colors",
+    meta: {
+      authRequired: false // a changer en cas de mise en production
+    },
+    component: () => import("./views/colors/index")
+  },
+
+  {
+    path: "/channels",
+    name: "channels",
+    meta: {
+      authRequired: false // a changer en cas de mise en production
+    },
+    component: () => import("./views/channels/index")
   },
   {
     path: "/login",

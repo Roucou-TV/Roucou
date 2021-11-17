@@ -94,6 +94,15 @@
     "menu": {
       "text": "Menu"
     },
+    "category": {
+      "text": "Category"
+    },
+    "color": {
+      "text": "Color"
+    },
+    "channel": {
+      "text": "Channel"
+    },
     "dashboards": {
       "text": "Dashboards",
       "badge": "03",

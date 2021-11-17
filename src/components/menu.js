@@ -1,16 +1,20 @@
 export const menuItems = [
   {
     id: 1,
-    label: "menuitems.menu.text",
-    isTitle: true
+    label: "menuitems.category.text",
+    link: "/categorys",
+    isTitle: false
   },
   {
     id: 2,
-    label: "menuitems.home.text",
-    icon: "bx-home-circle",
-    badge: {
-      variant: "info",
-      text: "menuitems.dashboards.badge"
-    }
+    label: "menuitems.color.text",
+    isTitle: false,
+    link: "/colors"
+  },
+  {
+    id: 3,
+    label: "menuitems.channel.text",
+    isTitle: false,
+    link: "/channels"
   }
 ];

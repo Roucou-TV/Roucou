@@ -1,4 +1,4 @@
-export const state = {
+ const state = {
   layoutType: 'vertical',
   layoutWidth: 'fluid',
   leftSidebarType: 'dark',
@@ -6,7 +6,7 @@ export const state = {
   loader: false
 }
 
-export const mutations = {
+ const mutations = {
   CHANGE_LAYOUT(state, layoutType) {
     state.layoutType = layoutType;
   },
@@ -24,7 +24,7 @@ export const mutations = {
   }
 }
 
-export const actions = {
+ const actions = {
   changeLayoutType({ commit }, { layoutType }) {
     commit('CHANGE_LAYOUT', layoutType);
   },
@@ -45,3 +45,5 @@ export const actions = {
     commit('LOADER', loader)
   }
 }
+
+export default { state, actions, mutations, namespaced: true };

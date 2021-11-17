@@ -1,8 +1,8 @@
 import Vue from "vue";
-import BootstrapVue from "bootstrap-vue";
+import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 import Vuelidate from "vuelidate";
 import VueMask from "v-mask";
-import { serviceworker } from "./registerServiceWorker";
+import { faitLe } from "./registerServiceWorker";
 import VueRouter from "vue-router";
 import vco from "v-click-outside";
 import NProgress from "vue-nprogress";
@@ -29,12 +29,34 @@ Vue.use(NProgress);
 Vue.use(VueRouter);
 Vue.use(Scrollspy);
 Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons);
 Vue.use(VueSweetalert2);
 Vue.component("ValidationObserver", ValidationObserver);
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.config.productionTip = false;
 const VueScrollTo = require("vue-scrollto");
-
+extend("required", {
+  validate(value) {
+    return {
+      required: true,
+      valid: ["", null, undefined].indexOf(value) === -1
+    };
+  },
+  computesRequired: true,
+  message: (fieldName, placeholders) => {
+    return `Le champ ${fieldName} est obligatoire`;
+  }
+});
+extend("isDifferent", {
+  validate(value, { otherVal }) {
+    // console.log("Les deux mots de passe doivent correspondrent: ", pass1);
+    return value != otherVal;
+  },
+  params: ["otherVal"],
+  message: (fieldName, placeholders) => {
+    return `Le ${fieldName} doit etre different du nom`;
+  }
+});
 let vm;
 auth.onAuthStateChanged(user => {
   if (!vm) {
@@ -48,7 +70,7 @@ auth.onAuthStateChanged(user => {
             process.env.NODE_ENV == "production"
           ) {
             console.log("[Production] Need service worker");
-            serviceworker();
+            faitLe();
           }
         })
         .catch(err => {
