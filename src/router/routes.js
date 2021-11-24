@@ -8,7 +8,7 @@ export default [
     meta: {
       authRequired: false // a changer en cas de mise en production
     },
-    component: () => import("./views/category/index")
+    component: () => import("./views/categorys/index")
   },
   {
     path: "/colors",
@@ -26,6 +26,22 @@ export default [
       authRequired: false // a changer en cas de mise en production
     },
     component: () => import("./views/channels/index")
+  },
+  {
+    path: "/test",
+    name: "test",
+    meta: {
+      authRequired: false // a changer en cas de mise en production
+    },
+    component: () => import("./views/test")
+  },
+  {
+    path: "/users",
+    name: "users",
+    meta: {
+      authRequired: false // a changer en cas de mise en production
+    },
+    component: () => import("./views/users/index")
   },
   {
     path: "/login",

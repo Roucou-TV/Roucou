@@ -16,5 +16,11 @@ export const menuItems = [
     label: "menuitems.channel.text",
     isTitle: false,
     link: "/channels"
-  }
+  },
+  {
+    id: 4,
+    label: "menuitems.user.text",
+    isTitle: false,
+    link: "/users"
+  },
 ];

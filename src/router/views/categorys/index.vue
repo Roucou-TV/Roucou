@@ -1,16 +1,17 @@
 <template>
 	<Layout>
 		<PageHeader :title="title" :items="items" />
-		<b-row v-if="showList" align-h="center">
-			<b-col md="6">
+
+		<b-row v-if="showList">
+			<b-col>
 				<div class="card">
 					<div class="card-body">
 						<b-row class="mb-2">
 							<b-col>
-								<h4 class="card-title mb-4">List des couleurs</h4>
+								<h4 class="card-title mb-4">List des categories</h4>
 							</b-col>
 							<b-col class="text-right">
-								<b-button variant="primary" class="text-right" @click="showList = !showList">Ajouter une couleur</b-button>
+								<b-button variant="primary" class="text-right" @click="showList = !showList">Ajouter une categorie</b-button>
 							</b-col>
 						</b-row>
 
@@ -24,15 +25,31 @@
 												<label class="custom-control-label" for="customCheck">&nbsp;</label>
 											</div>
 										</th>
+										<th>ID</th>
 										<th>Nom</th>
-										<th>Code Couleur</th>
-
+										<th>Date</th>
+										<th>Total</th>
+										<th>Payment Status</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="data in colors" :key="data.id">
+									<tr v-for="data in categorys" :key="data.id">
+										<td>
+											<div class="custom-control custom-checkbox">
+												<input :id="`customCheck${data.index}`" type="checkbox" class="custom-control-input" />
+												<label class="custom-control-label" :for="`customCheck${data.index}`">&nbsp;</label>
+											</div>
+										</td>
+										<td>
+											<a href="javascript: void(0);" class="text-body font-weight-bold">{{data.id}}</a>
+										</td>
 										<td>{{data.nom}}</td>
-										<td>{{data.code}}</td>
+										<td>{{data.description}}</td>
+										<td>{{data.total}}</td>
+										<td>
+											<span class="badge badge-pill badge-soft-success font-size-12" :class=" { 'badge-soft-danger': `${data.status}` === 'Chargeback',
+                        'badge-soft-warning': `${data.status}` === 'Refund' }">{{data.status}}</span>
+										</td>
 									</tr>
 								</tbody>
 							</table>
@@ -112,15 +129,16 @@
 					</div>
 				</div>
 			</b-col>
+
 		</b-row>
-		<b-row align-h="center" v-else>
+		<b-row v-else align-h="center">
 			<b-col cols="6">
 				<ValidationObserver ref="observer" v-slot="{ handleSubmit }">
-					<b-form @submit.prevent.stop="handleSubmit(add(categorie))" @reset.prevent.stop="reset" novalidate>
+					<b-form @submit.prevent.stop="handleSubmit(addCategorie)" @reset.prevent.stop="reset" novalidate>
 						<div class="card">
 							<div class="card-body">
 								<h4 class="card-title">
-									Ajouter une couleur
+									Ajouter une categorie
 								</h4>
 								<p class="card-title-desc">
 									* Toutes les informations sont obligatoires
@@ -131,15 +149,15 @@
 										<ValidationProvider rules="required|isDifferent:@emission" v-slot="validationContext" name="Nom" mode="passive" vid="nom">
 											<b-form-group :invalid-feedback="validationContext.errors[0]" :state="
 													getValidationState(validationContext)">
-												<label for="nom">Nom</label>
+												<label for="emailadmin">Nom</label>
 												<b-input-group preprend="@">
-													<b-form-input id="nom" v-model.trim="color.nom" name="nom" type="text" class="form-control" size="sm" placeholder="" autocomplete="off">
-													</b-form-input>
+													<b-form-input id="nom" v-model.trim="categorie.nom
+														" name="nom" type="text" class="form-control" size="sm" placeholder="" autocomplete="off"></b-form-input>
 
 												</b-input-group>
 											</b-form-group>
 										</ValidationProvider>
-										<ValidationProvider :rules="{ required: true }" v-slot="validationContext" name="Code" mode="passive">
+										<ValidationProvider :rules="{ required: true }" v-slot="validationContext" name="Couleur" mode="passive">
 											<b-form-group :invalid-feedback="
 													validationContext.errors[0]
 												" :state="
@@ -147,12 +165,45 @@
 														validationContext
 													)
 												">
-												<label for="color">Code Couleur</label>
+												<label for="passwordadmin">Couleur</label>
 												<b-input-group class="mb-2">
-													<b-form-input size="sm" id="color" name="color" type="text" v-model.trim="
-															color.code" autocomplete="off">
+													<b-form-input size="sm" id="passwordadmin" name="passwordadmin" type="text" v-model.trim="
+															categorie.couleur" autocomplete="off">
 													</b-form-input>
 
+												</b-input-group>
+											</b-form-group>
+										</ValidationProvider>
+										<ValidationProvider rules="required|isDifferent:@nom" v-slot="validationContext" name="Emission" mode="passive" vid="emission">
+											<b-form-group :invalid-feedback="
+													validationContext.errors[0]
+												" :state="
+													getValidationState(
+														validationContext
+													)
+												">
+												<label for="passwordadmin">Emission</label>
+												<b-input-group class="mb-2">
+													<b-form-input size="sm" id="passwordadmin" name="passwordadmin" type="text" v-model.trim="
+															categorie.emission
+														" autocomplete="off" />
+
+												</b-input-group>
+											</b-form-group>
+										</ValidationProvider>
+										<ValidationProvider :rules="{ required: true }" v-slot="validationContext" name="Caption" mode="passive">
+											<b-form-group :invalid-feedback="
+													validationContext.errors[0]
+												" :state="
+													getValidationState(
+														validationContext
+													)
+												">
+												<label for="captionCategorie">Caption</label>
+												<b-input-group class="mb-2">
+													<b-form-input size="sm" id="captionCategorie" name="captionCategorie" type="text" v-model.trim="
+															categorie.caption
+														" autocomplete="off" />
 												</b-input-group>
 											</b-form-group>
 										</ValidationProvider>
@@ -166,12 +217,9 @@
 											</b-col>
 											<b-col>
 												<b-form-group class="text-right">
-													<button @click.prevent="goBack" class="
-															btn btn-secondary
-															mr-1
-														">
+													<b-button variant="secondary" @click.prevent="goBack" class="mr-1">
 														Annuler
-													</button>
+													</b-button>
 													<b-button type="submit" variant="primary" :disabled="isloading">
 														<b-spinner v-if="isloading" small type="grow"></b-spinner>
 														Enregistrer
@@ -193,6 +241,7 @@
 				</ValidationObserver>
 			</b-col>
 		</b-row>
+
 	</Layout>
 </template>
 <script>
@@ -203,7 +252,7 @@
 
 	export default {
 		page: {
-			title: "Color",
+			title: "Categorie",
 			meta: [{ name: "description", content: appConfig.description }],
 		},
 		components: {
@@ -212,44 +261,107 @@
 		},
 		computed: {
 			...mapState({
-				colors: (state) => state.categorie.colors,
+				categorys: (state) => state.categorie.categorys,
 			}),
 		},
 		data() {
 			return {
-				title: "Color",
+				title: "Categorie",
 				error: null,
 				isloading: false,
 				showList: true,
 				showModal: false,
 				items: [
 					{
-						text: "Color",
-						to: "/colors",
+						text: "Categorie",
+						to: "/categorys",
 					},
 					{
 						text: "Default",
 						active: true,
 					},
 				],
-				color: {
+				categorie: {
 					nom: "",
-					code: "",
+					emission: "",
+					couleur: "",
+					caption: "",
 				},
+				categories: [
+					{
+						id: "#SK2540",
+						name: "Neal Matthews",
+						date: "07 Oct, 2019",
+						total: "$400",
+						status: "Paid",
+						payment: ["fa-cc-mastercard", "Mastercard"],
+						index: 1,
+					},
+					{
+						id: "#SK2541",
+						name: "Jamal Burnett",
+						date: "07 Oct, 2019",
+						total: "$380",
+						status: "Chargeback",
+						payment: ["fa-cc-visa", "Visa"],
+						index: 2,
+					},
+					{
+						id: "#SK2542",
+						name: "Juan Mitchell",
+						date: "06 Oct, 2019",
+						total: "$384",
+						status: "Paid",
+						payment: ["fab fa-cc-paypal", "Paypal"],
+						index: 3,
+					},
+					{
+						id: "#SK2543",
+						name: "Barry Dick",
+						date: "05 Oct, 2019",
+						total: "$412",
+						status: "Paid",
+						payment: ["fa-cc-mastercard", "Mastercard"],
+						index: 4,
+					},
+					{
+						id: "#SK2544",
+						name: "Ronald Taylor",
+						date: "04 Oct, 2019",
+						total: "$404",
+						status: "Refund",
+						payment: ["fa-cc-visa", "Visa"],
+						index: 5,
+					},
+					{
+						id: "#SK2545",
+						name: "Jacob Hunter",
+						date: "04 Oct, 2019",
+						total: "$392",
+						status: "Paid",
+						payment: ["fab fa-cc-paypal", "Paypal"],
+						index: 6,
+					},
+				],
 			};
 		},
 		methods: {
-			...mapActions("categorie", ["add"]),
+			...mapActions("categorie", ["addCategorie"]),
 			getValidationState({ dirty, validated, valid = null }) {
 				return dirty || validated ? valid : null;
 			},
-			addCategorie() {
-				this.add(this.color);
+			async addCategorie() {
+				this.isloading = !this.isloading;
+				await this.add(this.categorie);
+				this.isloading = !this.isloading;
+				this.showList = !this.showList;
 			},
 			reset() {
-				this.color = {
+				this.categorie = {
+					couleur: "",
 					nom: "",
-					code: "",
+					emission: "",
+					caption: "",
 				};
 				this.$nextTick(() => {
 					this.$refs.observer.reset();

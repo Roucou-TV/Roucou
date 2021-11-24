@@ -103,6 +103,9 @@
     "channel": {
       "text": "Channel"
     },
+    "user": {
+      "text": "Users"
+    },
     "dashboards": {
       "text": "Dashboards",
       "badge": "03",

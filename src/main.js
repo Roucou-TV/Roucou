@@ -54,7 +54,7 @@ extend("isDifferent", {
   },
   params: ["otherVal"],
   message: (fieldName, placeholders) => {
-    return `Le ${fieldName} doit etre different du nom`;
+    return `Le Nom doit etre different de l'Emission`;
   }
 });
 let vm;

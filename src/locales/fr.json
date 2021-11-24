@@ -103,6 +103,9 @@
     "channel": {
       "text": "Chaines"
     },
+    "user": {
+      "text": "Users"
+    },
     "dashboards": {
       "text": "Tableaux de bord",
       "badge": "03",
