@@ -9,6 +9,10 @@ import NProgress from "vue-nprogress";
 import router from "./router/index";
 import Scrollspy from "vue2-scrollspy";
 import VueSweetalert2 from "vue-sweetalert2";
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+import "@/assets/css/main.css";
+
 import { auth } from "@/firebase/firebase";
 import "@/design/index.scss";
 import store from "@/state/store";
@@ -27,6 +31,11 @@ Vue.use(VueMask);
 Vue.use(Vuelidate);
 Vue.use(NProgress);
 Vue.use(VueRouter);
+Vue.use(Toast, {
+  transition: "fade",
+  transitionDuration: { enter: 500, leave: 900 },
+  closeButton: true
+});
 Vue.use(Scrollspy);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
@@ -62,9 +71,14 @@ function isIsoDate(str) {
   var d = new Date(str);
   return d.toISOString() === str;
 }
+Vue.filter("capitalizeFirst", function(value) {
+  if (!value) return "";
+  value = value.toString();
+  return value.charAt(0).toUpperCase() + value.slice(1);
+});
 Vue.filter("formatDate", function(timestamp) {
   var e = typeof timestamp;
-//   console.log({ timestamp });
+  //   console.log({ timestamp });
   if (isIsoDate(timestamp)) {
     var date = new Date(timestamp);
     date.getDate() +

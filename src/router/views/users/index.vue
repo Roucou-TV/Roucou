@@ -24,24 +24,25 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="data in users" :key="data.id">
-										<td>{{data.id}}</td>
+									<tr v-for="(data,index) in users" :key="index">
+										<td>{{index}}</td>
 										<td>{{data.name}}</td>
 										<td>{{data.disabled}}</td>
 										<td>{{data.creation |formatDate}}</td>
 										<td>{{data.telephone}}</td>
 									</tr>
 								</tbody>
-								<tfoot>
-									<b-row class="text-right mt-5">
-										<b-col>
-											<b-button @click="getUsers" variant="primary" block>Voir plus</b-button>
-										</b-col>
-									</b-row>
-								</tfoot>
-							</table>
 
+							</table>
 						</div>
+						<b-row class=" mt-5">
+							<b-col class="text-left" v-if="!checkUser.hasMore">
+								Plus aucun utilisateurs à afficher
+							</b-col>
+							<b-col class="text-right">
+								<b-button @click="getUsers" variant="primary">Voir plus</b-button>
+							</b-col>
+						</b-row>
 					</div>
 				</div>
 			</b-col>
@@ -69,6 +70,9 @@
 			...mapActions("categorie", ["getUsers"]),
 		},
 		computed: {
+			...mapState({
+				checkUser: (state) => state.categorie.checkUser,
+			}),
 			...mapGetters("categorie", {
 				users: "getUsers",
 			}),

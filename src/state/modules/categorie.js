@@ -8,10 +8,11 @@ const state = {
   optionsCategories: [
     { value: null, text: "Selectionner une categorie", id: "" }
   ],
-  checkCat: { lastDocCat: null, documentLimit: 1, hasMore: true },
-  checkColor: { lastDocColor: null, documentLimit: 1, hasMore: true },
-  checkChannel: { lastDocChannel: null, documentLimit: 1, hasMore: true },
-  checkUser: { lastDocUser: null, documentLimit: 1, hasMore: true },
+  optionsColor: [{ value: null, text: "Selectionner une couleur", id: "" }],
+  checkCat: { lastDoc: null, documentLimit: 1, hasMore: true },
+  checkColor: { lastDoc: null, documentLimit: 1, hasMore: true },
+  checkChannel: { lastDoc: null, documentLimit: 1, hasMore: true },
+  checkUser: { lastDoc: null, documentLimit: 1, hasMore: true },
 
   colors: [],
   channels: [],
@@ -28,19 +29,19 @@ const mutations = {
     state.initdone = data;
   },
   ADD_COLOR(state, data) {
-    state.colors.unshift(data);
+    state.colors.push(data);
   },
   ADD_CATEGORY(state, data) {
-    state.categorys.unshift(data);
+    state.categorys.push(data);
   },
   ADD_COLOR(state, data) {
-    state.colors.unshift(data);
+    state.colors.push(data);
   },
   ADD_CHANNEL(state, data) {
-    state.channels.unshift(data);
+    state.channels.push(data);
   },
   ADD_USER(state, data) {
-    state.users.unshift(data);
+    state.users.push(data);
   },
   HAS_MORE_COLOR(state, e) {
     state.checkColor.hasMore = !!e;
@@ -55,35 +56,46 @@ const mutations = {
     state.checkCat.hasMore = !!e;
   },
 
-
   SET_LASTDOC_CHANNEL(state, data) {
-    state.checkChannel.lastDocChannel = data;
+    state.checkChannel.lastDoc = data;
   },
   SET_LASTDOC_CAT(state, data) {
-    state.checkCat.lastDocCat = data;
+    state.checkCat.lastDoc = data;
   },
   SET_LASTDOC_COLOR(state, data) {
-    state.checkColor.lastDocColor = data;
+    state.checkColor.lastDoc = data;
   },
   SET_LASTDOC_USER(state, data) {
-    state.checkUser.lastDocUser = data;
+    state.checkUser.lastDoc = data;
   },
 
   ADD_OPTION_CAT(state, category) {
-    state.optionsCategories.unshift({
+    state.optionsCategories.push({
       value: category.nom,
       id: category.id,
       text: category.nom
     });
   },
+  ADD_OPTION_COLOR(state, category) {
+    state.optionsColor.push({
+      value: category.nom,
+      id: category.id,
+      text: category.nom + "(" + category.code + ")"
+    });
+  },
   DELETE_OPTION_CAT(state, categoryId) {
     var index = state.optionsCategories.findIndex(ele => ele.id === categoryId);
     state.optionsCategories.splice(index, 1);
+  },
+  DELETE_OPTION_COLOR(state, colorId) {
+    var index = state.optionsColor.findIndex(ele => ele.id === colorId);
+    state.optionsColor.splice(index, 1);
   }
 };
 const actions = {
   async init({ commit, dispatch, rootState, state }) {
     dispatch("listenCat");
+    dispatch("listenColor");
     commit("INIT_DONE", true);
     if (state.users.length == 0) {
       await dispatch("getUsers");
@@ -91,10 +103,10 @@ const actions = {
     if (state.channels.length == 0) {
       await dispatch("getChannel");
     }
-    if (state.channels.length == 0) {
+    if (state.colors.length == 0) {
       await dispatch("getColor");
     }
-    if (state.channels.length == 0) {
+    if (state.categorys.length == 0) {
       await dispatch("getCategorie");
     }
   },
@@ -122,6 +134,39 @@ const actions = {
           });
         } else {
           console.log("Pas de collection menus");
+          commit("SET_EMPTY_MENUS");
+        }
+      },
+      function(error) {
+        console.log(error);
+        commit("SET_ERROR", error);
+      }
+    );
+  },
+  listenColor({ commit }, pay) {
+    firestore.collection("couleurs").onSnapshot(
+      snapshot => {
+        if (!snapshot.empty) {
+          snapshot.docChanges().forEach(function(change) {
+            if (change.type === "added") {
+              commit("ADD_OPTION_COLOR", {
+                id: change.doc.id,
+                ...change.doc.data()
+              });
+            }
+            if (change.type === "modified") {
+              commit("DELETE_OPTION_COLOR", change.doc.id);
+              commit("ADD_OPTION_COLOR", {
+                id: change.doc.id,
+                ...change.doc.data()
+              });
+            }
+            if (change.type === "removed") {
+              commit("DELETE_OPTION_COLOR", change.doc.id);
+            }
+          });
+        } else {
+          console.log("Pas de collection couleurs");
           commit("SET_EMPTY_MENUS");
         }
       },
@@ -183,10 +228,10 @@ const actions = {
       });
   },
   async getCategorie({ commit, state }, data) {
-    var { documentLimit, hasMore, lastDocCat } = state.checkCat;
+    var { documentLimit, hasMore, lastDoc } = state.checkCat;
     var snap = null;
     if (hasMore) {
-      if (lastDocCat == null) {
+      if (lastDoc == null) {
         snap = await firestore
           .collection("categories")
           .orderBy("nom")
@@ -212,10 +257,10 @@ const actions = {
     }
   },
   async getChannel({ commit, dispatch }, last) {
-    var { documentLimit, hasMore, lastDocChannel } = state.checkChannel;
+    var { documentLimit, hasMore, lastDoc } = state.checkChannel;
     var snap = null;
     if (hasMore) {
-      if (lastDocChannel == null) {
+      if (lastDoc == null) {
         snap = await firestore
           .collection("chaines")
           .orderBy("nom")
@@ -242,10 +287,10 @@ const actions = {
     }
   },
   async getColor({ commit, dispatch }, last) {
-    var { documentLimit, hasMore, lastDocColor } = state.checkColor;
+    var { documentLimit, hasMore, lastDoc } = state.checkColor;
     var snap = null;
     if (hasMore) {
-      if (lastDocColor == null) {
+      if (lastDoc == null) {
         snap = await firestore
           .collection("couleurs")
           .orderBy("nom")
@@ -272,10 +317,10 @@ const actions = {
     }
   },
   async getUsers({ commit, dispatch }, last) {
-    var { documentLimit, hasMore, lastDocUser } = state.checkUser;
+    var { documentLimit, hasMore, lastDoc } = state.checkUser;
     var snap = null;
     if (hasMore) {
-      if (lastDocUser == null) {
+      if (lastDoc == null) {
         snap = await firestore
           .collection("utilisateurs")
           .orderBy("name")
@@ -295,7 +340,6 @@ const actions = {
         commit("HAS_MORE_USER", false);
       }
       for (var doc of snap.docs) {
-        console.log(snap);
         commit("ADD_USER", { id: doc["id"], ...doc.data() });
       }
     } else {
@@ -317,11 +361,14 @@ const getters = {
   getChannels: (state, getters) => {
     return state.channels;
   },
+  getCategorys: (state, getters) => {
+    return state.categorys;
+  },
   optionsCategories: (state, getters) => {
     return state.optionsCategories;
   },
-  getCategorys: (state, getters) => {
-    return state.categorys;
+  optionsColor: (state, getters) => {
+    return state.optionsColor;
   }
 };
 

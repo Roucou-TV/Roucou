@@ -26,21 +26,31 @@
 										<th>Categorie</th>
 										<th>Lien</th>
 										<th>Caption</th>
+										<th>Description</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="data in channels" :key="data.id">
-										<td>{{data.id}}</td>
+									<tr v-for="(data,index) in channels" :key="index">
+										<td>{{index}}</td>
 										<td>{{data.nom}}</td>
 										<td>{{data.description}}</td>
 										<td>{{data.categorie}}</td>
 										<td>{{data.lien}}</td>
 										<td>{{data.caption}}</td>
+										<td>{{data.Description}}</td>
 									</tr>
 								</tbody>
 							</table>
 
 						</div>
+						<b-row class=" mt-5">
+							<b-col class="text-left" v-if="!checkChannel.hasMore">
+								Plus aucune chaines à afficher
+							</b-col>
+							<b-col class="text-right">
+								<b-button @click="getChannel" variant="primary">Voir plus</b-button>
+							</b-col>
+						</b-row>
 					</div>
 				</div>
 			</b-col>
@@ -48,7 +58,7 @@
 		<b-row align-h="center" v-else>
 			<b-col cols="6">
 				<ValidationObserver ref="observer" v-slot="{ handleSubmit }">
-					<b-form @submit.prevent.stop="handleSubmit(add(categorie))" @reset.prevent.stop="reset" novalidate>
+					<b-form @submit.prevent.stop="handleSubmit(add)" @reset.prevent.stop="reset" novalidate>
 						<div class="card">
 							<div class="card-body">
 								<h4 class="card-title">
@@ -60,7 +70,7 @@
 
 								<b-row>
 									<b-col cols="12">
-										<ValidationProvider rules="required" v-slot="validationContext" mode="passive" name="Nom" vid="nom">
+										<ValidationProvider rules="required" v-slot="validationContext" name="Nom" mode="passive" vid="nom">
 											<b-form-group :invalid-feedback="validationContext.errors[0]" :state="
 													getValidationState(validationContext)">
 												<label for="emailadmin">Nom</label>
@@ -71,7 +81,7 @@
 												</b-input-group>
 											</b-form-group>
 										</ValidationProvider>
-										<ValidationProvider :rules="{ required: true }" v-slot="validationContext" name="Description" mode="passive">
+										<ValidationProvider rules="required" v-slot="validationContext" name="Couleur" mode="passive">
 											<b-form-group :invalid-feedback="
 													validationContext.errors[0]
 												" :state="
@@ -81,10 +91,7 @@
 												">
 												<label for="passwordadmin">Couleur</label>
 												<b-input-group class="mb-2">
-													<b-form-input size="sm" id="passwordadmin" name="passwordadmin" type="text" v-model.trim="
-															chaine.couleur" autocomplete="off">
-													</b-form-input>
-
+													<b-form-select v-model="chaine.color" :options="optionsColor"></b-form-select>
 												</b-input-group>
 											</b-form-group>
 										</ValidationProvider>
@@ -103,7 +110,7 @@
 												</b-input-group>
 											</b-form-group>
 										</ValidationProvider>
-										<ValidationProvider :rules="{ required: true }" v-slot="validationContext" name="Caption" mode="passive">
+										<ValidationProvider rules="required" v-slot="validationContext" name="Caption" mode="passive">
 											<b-form-group :invalid-feedback="
 													validationContext.errors[0]
 												" :state="
@@ -136,7 +143,7 @@
 														Annuler
 													</button>
 													<b-button type="submit" variant="primary" :disabled="isloading">
-														<b-spinner v-if="isloading" small type="grow"></b-spinner>
+														<b-spinner v-if="isloading" small></b-spinner>
 														Enregistrer
 													</b-button>
 												</b-form-group>
@@ -162,7 +169,7 @@
 	import Layout from "../../layouts/main";
 	import appConfig from "@/app.config";
 	import PageHeader from "@/components/page-header";
-	import { mapActions, mapGetters } from "vuex";
+	import { mapActions, mapGetters, mapState } from "vuex";
 
 	export default {
 		page: {
@@ -194,24 +201,37 @@
 					nom: "",
 					categorie: "",
 					description: "",
+					img: "",
 					lien: "",
+					vues: "",
 					caption: "",
 				},
 			};
 		},
 		computed: {
+			...mapState({
+				checkChannel: (state) => state.categorie.checkChannel,
+			}),
 			...mapGetters("categorie", {
 				optionsCategories: "optionsCategories",
+				optionsColor: "optionsColor",
 				channels: "getChannels",
 			}),
 		},
 		methods: {
-			...mapActions("categorie", ["addChannel"]),
+			...mapActions("categorie", ["addChannel", "getChannel"]),
 			getValidationState({ dirty, validated, valid = null }) {
 				return dirty || validated ? valid : null;
 			},
-			addCategorie() {
-				this.add(this.chaine);
+			async add() {
+				return this.addChannel(this.chaine)
+					.then((result) => {
+						this.$toast("Une couleur a été ajouté", { icon: false });
+						this.showList = !this.showList;
+					})
+					.catch((err) => {
+						console.log(err);
+					});
 			},
 			reset() {
 				this.chaine = {

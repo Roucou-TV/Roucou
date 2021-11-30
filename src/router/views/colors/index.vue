@@ -19,10 +19,7 @@
 								<thead class="thead-light">
 									<tr>
 										<th style="width: 20px;">
-											<div class="custom-control custom-checkbox">
-												<input id="customCheck" type="checkbox" class="custom-control-input" />
-												<label class="custom-control-label" for="customCheck">&nbsp;</label>
-											</div>
+											#
 										</th>
 										<th>Nom</th>
 										<th>Code Couleur</th>
@@ -30,9 +27,10 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="data in colors" :key="data.id">
-										<td>{{data.nom}}</td>
-										<td>{{data.code}}</td>
+									<tr v-for="(data,index) in colors" :key="data.id">
+										<td>{{index}}</td>
+										<td>{{data.nom | capitalizeFirst}}</td>
+										<td>{{data.code }}</td>
 									</tr>
 								</tbody>
 							</table>
@@ -109,6 +107,14 @@
 								</template>
 							</b-modal>
 						</div>
+						<b-row class=" mt-5">
+							<b-col class="text-left" v-if="!checkColor.hasMore">
+								Plus aucune couleur à afficher
+							</b-col>
+							<b-col class="text-right">
+								<b-button @click="getColor" variant="primary">Voir plus</b-button>
+							</b-col>
+						</b-row>
 					</div>
 				</div>
 			</b-col>
@@ -116,7 +122,7 @@
 		<b-row align-h="center" v-else>
 			<b-col cols="6">
 				<ValidationObserver ref="observer" v-slot="{ handleSubmit }">
-					<b-form @submit.prevent.stop="handleSubmit(add(categorie))" @reset.prevent.stop="reset" novalidate>
+					<b-form @submit.prevent.stop="handleSubmit(add)" @reset.prevent.stop="reset" novalidate>
 						<div class="card">
 							<div class="card-body">
 								<h4 class="card-title">
@@ -149,7 +155,7 @@
 												">
 												<label for="color">Code Couleur</label>
 												<b-input-group class="mb-2">
-													<b-form-input size="sm" id="color" name="color" type="text" v-model.trim="
+													<b-form-input size="sm" id="color" name="color" type="number" v-model.trim="
 															color.code" autocomplete="off">
 													</b-form-input>
 
@@ -213,6 +219,7 @@
 		computed: {
 			...mapState({
 				colors: (state) => state.categorie.colors,
+				checkColor: (state) => state.categorie.checkColor,
 			}),
 		},
 		data() {
@@ -239,12 +246,19 @@
 			};
 		},
 		methods: {
-			...mapActions("categorie", ["add"]),
+			...mapActions("categorie", ["addColor", "getColor"]),
 			getValidationState({ dirty, validated, valid = null }) {
 				return dirty || validated ? valid : null;
 			},
-			addCategorie() {
-				this.add(this.color);
+			async add() {
+				return this.addColor(this.color)
+					.then((result) => {
+						this.$toast("Une couleur a été ajouté", { icon: false });
+					})
+					.catch((err) => {
+						this.$toast(`${err}`, { icon: false });
+					});
+				
 			},
 			reset() {
 				this.color = {

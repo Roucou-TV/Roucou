@@ -19,37 +19,22 @@
 							<table class="table table-centered table-nowrap">
 								<thead class="thead-light">
 									<tr>
-										<th style="width: 20px;">
-											<div class="custom-control custom-checkbox">
-												<input id="customCheck" type="checkbox" class="custom-control-input" />
-												<label class="custom-control-label" for="customCheck">&nbsp;</label>
-											</div>
-										</th>
 										<th>ID</th>
 										<th>Nom</th>
-										<th>Date</th>
-										<th>Total</th>
-										<th>Payment Status</th>
+										<th>Caption</th>
+										<th>Couleur</th>
+										<th>Emission</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="data in categorys" :key="data.id">
+									<tr v-for="(data,index) in categorys" :key="index">
 										<td>
-											<div class="custom-control custom-checkbox">
-												<input :id="`customCheck${data.index}`" type="checkbox" class="custom-control-input" />
-												<label class="custom-control-label" :for="`customCheck${data.index}`">&nbsp;</label>
-											</div>
-										</td>
-										<td>
-											<a href="javascript: void(0);" class="text-body font-weight-bold">{{data.id}}</a>
+											{{index}}
 										</td>
 										<td>{{data.nom}}</td>
-										<td>{{data.description}}</td>
-										<td>{{data.total}}</td>
-										<td>
-											<span class="badge badge-pill badge-soft-success font-size-12" :class=" { 'badge-soft-danger': `${data.status}` === 'Chargeback',
-                        'badge-soft-warning': `${data.status}` === 'Refund' }">{{data.status}}</span>
-										</td>
+										<td>{{data.caption}}</td>
+										<td>{{data.couleur}}</td>
+										<td>{{data.emission}}</td>
 									</tr>
 								</tbody>
 							</table>
@@ -126,6 +111,14 @@
 								</template>
 							</b-modal>
 						</div>
+						<b-row class=" mt-5">
+							<b-col class="text-left" v-if="!checkCat.hasMore">
+								Plus aucune categorie à afficher
+							</b-col>
+							<b-col class="text-right">
+								<b-button @click="getCategorie" variant="primary">Voir plus</b-button>
+							</b-col>
+						</b-row>
 					</div>
 				</div>
 			</b-col>
@@ -157,7 +150,7 @@
 												</b-input-group>
 											</b-form-group>
 										</ValidationProvider>
-										<ValidationProvider :rules="{ required: true }" v-slot="validationContext" name="Couleur" mode="passive">
+										<ValidationProvider rules="required" v-slot="validationContext" name="Couleur" mode="passive">
 											<b-form-group :invalid-feedback="
 													validationContext.errors[0]
 												" :state="
@@ -191,7 +184,7 @@
 												</b-input-group>
 											</b-form-group>
 										</ValidationProvider>
-										<ValidationProvider :rules="{ required: true }" v-slot="validationContext" name="Caption" mode="passive">
+										<ValidationProvider rules="required" v-slot="validationContext" name="Caption" mode="passive">
 											<b-form-group :invalid-feedback="
 													validationContext.errors[0]
 												" :state="
@@ -248,7 +241,7 @@
 	import Layout from "../../layouts/main";
 	import appConfig from "@/app.config";
 	import PageHeader from "@/components/page-header";
-	import { mapActions, mapState } from "vuex";
+	import { mapActions, mapState, mapGetters } from "vuex";
 
 	export default {
 		page: {
@@ -262,6 +255,10 @@
 		computed: {
 			...mapState({
 				categorys: (state) => state.categorie.categorys,
+				checkCat: (state) => state.categorie.checkCat,
+			}),
+			...mapGetters("categorie", {
+				optionsColor: "optionsColor",
 			}),
 		},
 		data() {
@@ -346,15 +343,21 @@
 			};
 		},
 		methods: {
-			...mapActions("categorie", ["addCategorie"]),
+			...mapActions("categorie", ["addCategorie", "getCategorie"]),
 			getValidationState({ dirty, validated, valid = null }) {
 				return dirty || validated ? valid : null;
 			},
-			async addCategorie() {
+			async add() {
 				this.isloading = !this.isloading;
-				await this.add(this.categorie);
-				this.isloading = !this.isloading;
-				this.showList = !this.showList;
+				return this.addCategorie(this.categorie)
+					.then((result) => {
+						this.isloading = !this.isloading;
+						this.showList = !this.showList;
+					})
+					.catch((err) => {
+						this.isloading = !this.isloading;
+						this.showList = !this.showList;
+					});
 			},
 			reset() {
 				this.categorie = {
