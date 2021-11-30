@@ -2,14 +2,13 @@
 	<Layout>
 		<PageHeader :title="title" :items="items" />
 		<b-row v-if="showList" align-h="center">
-			<b-col md="8">
+			<b-col md="12">
 				<div class="card">
 					<div class="card-body">
 						<b-row class="mb-2">
 							<b-col>
 								<h4 class="card-title mb-4">Liste des utilisateurs</h4>
 							</b-col>
-
 						</b-row>
 						<div class="table-responsive mb-0">
 							<table class="table table-centered table-nowrap">
@@ -29,10 +28,17 @@
 										<td>{{data.id}}</td>
 										<td>{{data.name}}</td>
 										<td>{{data.disabled}}</td>
-										<td>{{data.creation}}</td>
+										<td>{{data.creation |formatDate}}</td>
 										<td>{{data.telephone}}</td>
 									</tr>
 								</tbody>
+								<tfoot>
+									<b-row class="text-right mt-5">
+										<b-col>
+											<b-button @click="getUsers" variant="primary" block>Voir plus</b-button>
+										</b-col>
+									</b-row>
+								</tfoot>
 							</table>
 
 						</div>
@@ -59,13 +65,12 @@
 			Layout,
 			PageHeader,
 		},
+		methods: {
+			...mapActions("categorie", ["getUsers"]),
+		},
 		computed: {
-			// ...mapState({
-			// 	optionsCategories: (state) => state.categorie.optionsCategories,
-			// 	channels: (state) => state.categorie.channels,
-			// }),
-			...mapGetters("categorie",{
-				users: "getUsers"
+			...mapGetters("categorie", {
+				users: "getUsers",
 			}),
 		},
 		data() {

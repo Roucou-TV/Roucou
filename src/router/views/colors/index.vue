@@ -2,7 +2,7 @@
 	<Layout>
 		<PageHeader :title="title" :items="items" />
 		<b-row v-if="showList" align-h="center">
-			<b-col md="6">
+			<b-col md="12">
 				<div class="card">
 					<div class="card-body">
 						<b-row class="mb-2">

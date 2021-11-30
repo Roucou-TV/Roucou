@@ -57,6 +57,36 @@ extend("isDifferent", {
     return `Le Nom doit etre different de l'Emission`;
   }
 });
+function isIsoDate(str) {
+  if (!/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(str)) return false;
+  var d = new Date(str);
+  return d.toISOString() === str;
+}
+Vue.filter("formatDate", function(timestamp) {
+  var e = typeof timestamp;
+//   console.log({ timestamp });
+  if (isIsoDate(timestamp)) {
+    var date = new Date(timestamp);
+    date.getDate() +
+      "/" +
+      (date.getMonth() + 1) +
+      "/" +
+      date.getFullYear() +
+      " à " +
+      date.getHours +
+      ":" +
+      date.getSeconds;
+  } else if (timestamp) {
+    var date = timestamp.toDate();
+    return (
+      date.toLocaleDateString("fr-CD") +
+      " à " +
+      date.toLocaleTimeString("fr-CD")
+    );
+  } else {
+    return "Indisponible";
+  }
+});
 let vm;
 auth.onAuthStateChanged(user => {
   if (!vm) {
