@@ -332,7 +332,7 @@ const actions = {
         snap = await firestore
           .collection("utilisateurs")
           .orderBy("name")
-          .startAfter(lastDocUser)
+          .startAfter(lastDoc)
           .limit(documentLimit)
           .get();
       }

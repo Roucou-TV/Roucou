@@ -52,34 +52,8 @@
           "slack": "Slack"
         }
       },
-      "notification": {
-        "badge": "3",
-        "text": "Notifications",
-        "subtext": "View All",
-        "order": {
-          "title": "Your order is placed",
-          "text": "If several languages coalesce the grammar",
-          "time": "3 min ago"
-        },
-        "james": {
-          "title": "James Lemire",
-          "text": "It will seem like simplified English.",
-          "time": "1 hours ago"
-        },
-        "item": {
-          "title": "Your item is shipped",
-          "text": "If several languages coalesce the grammar",
-          "time": "3 min ago"
-        },
-        "salena": {
-          "title": "Salena Layfield",
-          "text": "As a skeptical Cambridge friend of mine occidental.",
-          "time": "1 hours ago"
-        },
-        "button": "Load More.."
-      },
-      "henry": {
-        "text": "Henry",
+      "user": {
+        "text": "Roucou User",
         "list": {
           "profile": "Profile",
           "mywallet": "My Wallet",
