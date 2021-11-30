@@ -80,7 +80,7 @@ const mutations = {
     state.optionsColor.push({
       value: category.nom,
       id: category.id,
-      text: category.nom + "(" + category.code + ")"
+      text: category.nom + " (" + category.code + ")"
     });
   },
   DELETE_OPTION_CAT(state, categoryId) {
@@ -93,8 +93,8 @@ const mutations = {
   }
 };
 const actions = {
-  async init({ commit, dispatch, rootState, state }) {
-    dispatch("listenCat");
+  async init({ commit, dispatch, state }) {
+    dispatch("listenCategorie");
     dispatch("listenColor");
     commit("INIT_DONE", true);
     if (state.users.length == 0) {
@@ -110,7 +110,7 @@ const actions = {
       await dispatch("getCategorie");
     }
   },
-  listenCat({ commit }, pay) {
+  listenCategorie({ commit }, pay) {
     firestore.collection("categories").onSnapshot(
       snapshot => {
         if (!snapshot.empty) {
@@ -176,6 +176,7 @@ const actions = {
       }
     );
   },
+
   addCategorie({ commit }, category) {
     return firestore
       .collection("categories")
@@ -227,6 +228,7 @@ const actions = {
         return false;
       });
   },
+
   async getCategorie({ commit, state }, data) {
     var { documentLimit, hasMore, lastDoc } = state.checkCat;
     var snap = null;

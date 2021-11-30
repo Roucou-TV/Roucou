@@ -34,7 +34,6 @@ Vue.use(VueRouter);
 Vue.use(Toast, {
   transition: "fade",
   transitionDuration: { enter: 500, leave: 900 },
-  closeButton: true
 });
 Vue.use(Scrollspy);
 Vue.use(BootstrapVue);
