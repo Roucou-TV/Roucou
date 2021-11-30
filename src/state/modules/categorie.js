@@ -9,10 +9,10 @@ const state = {
     { value: null, text: "Selectionner une categorie", id: "" }
   ],
   optionsColor: [{ value: null, text: "Selectionner une couleur", id: "" }],
-  checkCat: { lastDoc: null, documentLimit: 1, hasMore: true },
-  checkColor: { lastDoc: null, documentLimit: 1, hasMore: true },
-  checkChannel: { lastDoc: null, documentLimit: 1, hasMore: true },
-  checkUser: { lastDoc: null, documentLimit: 1, hasMore: true },
+  checkCat: { lastDoc: null, documentLimit: 10, hasMore: true },
+  checkColor: { lastDoc: null, documentLimit: 10, hasMore: true },
+  checkChannel: { lastDoc: null, documentLimit: 10, hasMore: true },
+  checkUser: { lastDoc: null, documentLimit: 10, hasMore: true },
 
   colors: [],
   channels: [],
