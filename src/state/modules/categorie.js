@@ -6,7 +6,7 @@ const state = {
   lastMenu: null,
   initdone: false,
   optionsCategories: [
-    { value: null, text: "Selectionner une categorie", id: "" }
+    { value: null, text: "Selectionner une categorie", id: "" },
   ],
   optionsColor: [{ value: null, text: "Selectionner une couleur", id: "" }],
   checkCat: { lastDoc: null, documentLimit: 10, hasMore: true },
@@ -17,7 +17,7 @@ const state = {
   colors: [],
   channels: [],
   users: [],
-  categorys: []
+  categorys: [],
 };
 
 const mutations = {
@@ -73,24 +73,26 @@ const mutations = {
     state.optionsCategories.push({
       value: category.nom,
       id: category.id,
-      text: category.nom
+      text: category.nom,
     });
   },
   ADD_OPTION_COLOR(state, category) {
     state.optionsColor.push({
       value: category.nom,
       id: category.id,
-      text: category.nom + " (" + category.code + ")"
+      text: category.nom + " (" + category.code + ")",
     });
   },
   DELETE_OPTION_CAT(state, categoryId) {
-    var index = state.optionsCategories.findIndex(ele => ele.id === categoryId);
+    var index = state.optionsCategories.findIndex(
+      (ele) => ele.id === categoryId
+    );
     state.optionsCategories.splice(index, 1);
   },
   DELETE_OPTION_COLOR(state, colorId) {
-    var index = state.optionsColor.findIndex(ele => ele.id === colorId);
+    var index = state.optionsColor.findIndex((ele) => ele.id === colorId);
     state.optionsColor.splice(index, 1);
-  }
+  },
 };
 const actions = {
   async init({ commit, dispatch, state }) {
@@ -112,20 +114,20 @@ const actions = {
   },
   listenCategorie({ commit }, pay) {
     firestore.collection("categories").onSnapshot(
-      snapshot => {
+      (snapshot) => {
         if (!snapshot.empty) {
-          snapshot.docChanges().forEach(function(change) {
+          snapshot.docChanges().forEach(function (change) {
             if (change.type === "added") {
               commit("ADD_OPTION_CAT", {
                 id: change.doc.id,
-                ...change.doc.data()
+                ...change.doc.data(),
               });
             }
             if (change.type === "modified") {
               commit("DELETE_OPTION_CAT", change.doc.id);
               commit("ADD_OPTION_CAT", {
                 id: change.doc.id,
-                ...change.doc.data()
+                ...change.doc.data(),
               });
             }
             if (change.type === "removed") {
@@ -137,7 +139,7 @@ const actions = {
           commit("SET_EMPTY_MENUS");
         }
       },
-      function(error) {
+      function (error) {
         console.log(error);
         commit("SET_ERROR", error);
       }
@@ -145,20 +147,20 @@ const actions = {
   },
   listenColor({ commit }, pay) {
     firestore.collection("couleurs").onSnapshot(
-      snapshot => {
+      (snapshot) => {
         if (!snapshot.empty) {
-          snapshot.docChanges().forEach(function(change) {
+          snapshot.docChanges().forEach(function (change) {
             if (change.type === "added") {
               commit("ADD_OPTION_COLOR", {
                 id: change.doc.id,
-                ...change.doc.data()
+                ...change.doc.data(),
               });
             }
             if (change.type === "modified") {
               commit("DELETE_OPTION_COLOR", change.doc.id);
               commit("ADD_OPTION_COLOR", {
                 id: change.doc.id,
-                ...change.doc.data()
+                ...change.doc.data(),
               });
             }
             if (change.type === "removed") {
@@ -170,7 +172,7 @@ const actions = {
           commit("SET_EMPTY_MENUS");
         }
       },
-      function(error) {
+      function (error) {
         console.log(error);
         commit("SET_ERROR", error);
       }
@@ -178,15 +180,16 @@ const actions = {
   },
 
   addCategorie({ commit }, category) {
+    console.log(category);
     return firestore
       .collection("categories")
       .add(category)
-      .then(docref => {
+      .then((docref) => {
         console.log("Une nouvelle categorie a été ajouté. ", docref);
         commit("ADD_CATEGORY", { ...category, id: docref.id });
         return true;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(
           "Une erreur est survenue lors de l'ajout d'une categorie: ",
           err
@@ -198,12 +201,12 @@ const actions = {
     return firestore
       .collection("couleurs")
       .add(color)
-      .then(docref => {
+      .then((docref) => {
         console.log("Une nouvelle color a été ajouté. avec l'ID ", docref.id);
         commit("ADD_COLOR", { ...color, id: docref.id });
         return true;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(
           "Une erreur est survenue lors de l'ajout d'une color: ",
           err
@@ -215,12 +218,12 @@ const actions = {
     return firestore
       .collection("chaines")
       .add(channel)
-      .then(docref => {
+      .then((docref) => {
         console.log("Une nouvelle chaine a été ajouté. ", docref);
         commit("ADD_CHANNEL", { ...channel, id: docref.id });
         return true;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(
           "Une erreur est survenue lors de l'ajout d'une chaine: ",
           err
@@ -347,7 +350,7 @@ const actions = {
     } else {
       console.log("Plus aucun utilistaeur à afficher");
     }
-  }
+  },
 };
 
 const getters = {
@@ -371,7 +374,7 @@ const getters = {
   },
   optionsColor: (state, getters) => {
     return state.optionsColor;
-  }
+  },
 };
 
 export default { state, actions, mutations, getters, namespaced: true };

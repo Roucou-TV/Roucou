@@ -27,14 +27,14 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr v-for="(data,index) in categorys" :key="index">
+										<tr v-for="(data, index) in categorys" :key="index">
 											<td>
-												{{index}}
+												{{ index }}
 											</td>
-											<td>{{data.nom}}</td>
-											<td>{{data.caption}}</td>
-											<td>{{data.couleur}}</td>
-											<td>{{data.emission}}</td>
+											<td>{{ data.nom }}</td>
+											<td>{{ data.caption }}</td>
+											<td>{{ data.couleur }}</td>
+											<td>{{ data.emission }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -65,7 +65,9 @@
 													</th>
 													<td>
 														<div>
-															<h5 class="text-truncate font-size-14">Wireless Headphone (Black)</h5>
+															<h5 class="text-truncate font-size-14">
+																Wireless Headphone (Black)
+															</h5>
 															<p class="text-muted mb-0">$ 225 x 1</p>
 														</div>
 													</td>
@@ -79,7 +81,9 @@
 													</th>
 													<td>
 														<div>
-															<h5 class="text-truncate font-size-14">Phone patterned cases</h5>
+															<h5 class="text-truncate font-size-14">
+																Phone patterned cases
+															</h5>
 															<p class="text-muted mb-0">$ 145 x 1</p>
 														</div>
 													</td>
@@ -111,7 +115,7 @@
 									</template>
 								</b-modal>
 							</div>
-							<b-row class=" mt-5">
+							<b-row class="mt-5">
 								<b-col class="text-left" v-if="!checkCat.hasMore">
 									Plus aucune categorie à afficher
 								</b-col>
@@ -122,17 +126,14 @@
 						</div>
 					</div>
 				</b-col>
-
 			</b-row>
 			<b-row v-else align-h="center">
 				<b-col cols="6">
 					<ValidationObserver ref="observer" v-slot="{ handleSubmit }">
-						<b-form @submit.prevent.stop="handleSubmit(addCategorie)" @reset.prevent.stop="reset" novalidate>
+						<b-form @submit.prevent.stop="handleSubmit(add)" @reset.prevent.stop="reset" novalidate>
 							<div class="card">
 								<div class="card-body">
-									<h4 class="card-title">
-										Ajouter une categorie
-									</h4>
+									<h4 class="card-title">Ajouter une categorie</h4>
 									<p class="card-title-desc">
 										* Toutes les informations sont obligatoires
 									</p>
@@ -140,24 +141,15 @@
 									<b-row>
 										<b-col cols="12">
 											<ValidationProvider rules="required|isDifferent:@emission" v-slot="validationContext" name="Nom" mode="passive" vid="nom">
-												<b-form-group :invalid-feedback="validationContext.errors[0]" :state="
-													getValidationState(validationContext)">
+												<b-form-group :invalid-feedback="validationContext.errors[0]" :state="getValidationState(validationContext)">
 													<label for="emailadmin">Nom</label>
 													<b-input-group preprend="@">
-														<b-form-input id="nom" v-model.trim="categorie.nom
-														" name="nom" type="text" class="form-control" size="sm" placeholder="" autocomplete="off"></b-form-input>
-
+														<b-form-input id="nom" v-model.trim="categorie.nom" name="nom" type="text" class="form-control" size="sm" placeholder="" autocomplete="off"></b-form-input>
 													</b-input-group>
 												</b-form-group>
 											</ValidationProvider>
 											<ValidationProvider rules="required" v-slot="validationContext" name="Couleur" mode="passive">
-												<b-form-group :invalid-feedback="
-													validationContext.errors[0]
-												" :state="
-													getValidationState(
-														validationContext
-													)
-												">
+												<b-form-group :invalid-feedback="validationContext.errors[0]" :state="getValidationState(validationContext)">
 													<label for="passwordadmin">Couleur</label>
 													<b-input-group class="mb-2">
 														<b-form-select v-model="categorie.couleur" :options="optionsColor"></b-form-select>
@@ -165,35 +157,18 @@
 												</b-form-group>
 											</ValidationProvider>
 											<ValidationProvider rules="required|isDifferent:@nom" v-slot="validationContext" name="Emission" mode="passive" vid="emission">
-												<b-form-group :invalid-feedback="
-													validationContext.errors[0]
-												" :state="
-													getValidationState(
-														validationContext
-													)
-												">
+												<b-form-group :invalid-feedback="validationContext.errors[0]" :state="getValidationState(validationContext)">
 													<label for="passwordadmin">Emission</label>
 													<b-input-group class="mb-2">
-														<b-form-input size="sm" id="passwordadmin" name="passwordadmin" type="text" v-model.trim="
-															categorie.emission
-														" autocomplete="off" />
-
+														<b-form-input size="sm" id="passwordadmin" name="passwordadmin" type="text" v-model.trim="categorie.emission" autocomplete="off" />
 													</b-input-group>
 												</b-form-group>
 											</ValidationProvider>
 											<ValidationProvider rules="required" v-slot="validationContext" name="Caption" mode="passive">
-												<b-form-group :invalid-feedback="
-													validationContext.errors[0]
-												" :state="
-													getValidationState(
-														validationContext
-													)
-												">
+												<b-form-group :invalid-feedback="validationContext.errors[0]" :state="getValidationState(validationContext)">
 													<label for="captionCategorie">Caption</label>
 													<b-input-group class="mb-2">
-														<b-form-input size="sm" id="captionCategorie" name="captionCategorie" type="text" v-model.trim="
-															categorie.caption
-														" autocomplete="off" />
+														<b-form-input size="sm" id="captionCategorie" name="captionCategorie" type="text" v-model.trim="categorie.caption" autocomplete="off" />
 													</b-input-group>
 												</b-form-group>
 											</ValidationProvider>
@@ -232,149 +207,152 @@
 				</b-col>
 			</b-row>
 		</transition>
-
 	</Layout>
 </template>
 <script>
-	import Layout from "../../layouts/main";
-	import appConfig from "@/app.config";
-	import PageHeader from "@/components/page-header";
-	import { mapActions, mapState, mapGetters } from "vuex";
+import Layout from "../../layouts/main";
+import appConfig from "@/app.config";
+import PageHeader from "@/components/page-header";
+import { mapActions, mapState, mapGetters } from "vuex";
 
-	export default {
-		page: {
+export default {
+	page: {
+		title: "Categorie",
+		meta: [{ name: "description", content: appConfig.description }],
+	},
+	components: {
+		Layout,
+		PageHeader,
+	},
+	computed: {
+		...mapState({
+			categorys: (state) => state.categorie.categorys,
+			checkCat: (state) => state.categorie.checkCat,
+		}),
+		...mapGetters("categorie", {
+			optionsColor: "optionsColor",
+		}),
+	},
+	data() {
+		return {
 			title: "Categorie",
-			meta: [{ name: "description", content: appConfig.description }],
-		},
-		components: {
-			Layout,
-			PageHeader,
-		},
-		computed: {
-			...mapState({
-				categorys: (state) => state.categorie.categorys,
-				checkCat: (state) => state.categorie.checkCat,
-			}),
-			...mapGetters("categorie", {
-				optionsColor: "optionsColor",
-			}),
-		},
-		data() {
-			return {
-				title: "Categorie",
-				error: null,
-				isloading: false,
-				showList: true,
-				showModal: false,
-				items: [
-					{
-						text: "Categorie",
-						to: "/categorys",
-					},
-					{
-						text: "Default",
-						active: true,
-					},
-				],
-				categorie: {
-					nom: "",
-					emission: "",
-					couleur: "",
-					caption: "",
+			error: null,
+			isloading: false,
+			showList: true,
+			showModal: false,
+			items: [
+				{
+					text: "Categorie",
+					to: "/categorys",
 				},
-				categories: [
-					{
-						id: "#SK2540",
-						name: "Neal Matthews",
-						date: "07 Oct, 2019",
-						total: "$400",
-						status: "Paid",
-						payment: ["fa-cc-mastercard", "Mastercard"],
-						index: 1,
-					},
-					{
-						id: "#SK2541",
-						name: "Jamal Burnett",
-						date: "07 Oct, 2019",
-						total: "$380",
-						status: "Chargeback",
-						payment: ["fa-cc-visa", "Visa"],
-						index: 2,
-					},
-					{
-						id: "#SK2542",
-						name: "Juan Mitchell",
-						date: "06 Oct, 2019",
-						total: "$384",
-						status: "Paid",
-						payment: ["fab fa-cc-paypal", "Paypal"],
-						index: 3,
-					},
-					{
-						id: "#SK2543",
-						name: "Barry Dick",
-						date: "05 Oct, 2019",
-						total: "$412",
-						status: "Paid",
-						payment: ["fa-cc-mastercard", "Mastercard"],
-						index: 4,
-					},
-					{
-						id: "#SK2544",
-						name: "Ronald Taylor",
-						date: "04 Oct, 2019",
-						total: "$404",
-						status: "Refund",
-						payment: ["fa-cc-visa", "Visa"],
-						index: 5,
-					},
-					{
-						id: "#SK2545",
-						name: "Jacob Hunter",
-						date: "04 Oct, 2019",
-						total: "$392",
-						status: "Paid",
-						payment: ["fab fa-cc-paypal", "Paypal"],
-						index: 6,
-					},
-				],
-			};
-		},
-		methods: {
-			...mapActions("categorie", ["addCategorie", "getCategorie"]),
-			getValidationState({ dirty, validated, valid = null }) {
-				return dirty || validated ? valid : null;
+				{
+					text: "Default",
+					active: true,
+				},
+			],
+			categorie: {
+				nom: "",
+				emission: "",
+				couleur: "",
+				caption: "",
 			},
-			async add() {
-				this.isloading = !this.isloading;
-				return this.addCategorie(this.categorie)
-					.then((result) => {
-						this.isloading = !this.isloading;
-						this.$toast("Une categorie a été ajouté", { icon: false });
-						setTimeout(() => {
-							this.showList = !this.showList;
-							this.reset()
-						}, 2000);
-					})
-					.catch((err) => {
-						this.isloading = !this.isloading;
-						this.$toast("Impossible d'ajouter a une categorie", { icon: true,type:'error' });
+			categories: [
+				{
+					id: "#SK2540",
+					name: "Neal Matthews",
+					date: "07 Oct, 2019",
+					total: "$400",
+					status: "Paid",
+					payment: ["fa-cc-mastercard", "Mastercard"],
+					index: 1,
+				},
+				{
+					id: "#SK2541",
+					name: "Jamal Burnett",
+					date: "07 Oct, 2019",
+					total: "$380",
+					status: "Chargeback",
+					payment: ["fa-cc-visa", "Visa"],
+					index: 2,
+				},
+				{
+					id: "#SK2542",
+					name: "Juan Mitchell",
+					date: "06 Oct, 2019",
+					total: "$384",
+					status: "Paid",
+					payment: ["fab fa-cc-paypal", "Paypal"],
+					index: 3,
+				},
+				{
+					id: "#SK2543",
+					name: "Barry Dick",
+					date: "05 Oct, 2019",
+					total: "$412",
+					status: "Paid",
+					payment: ["fa-cc-mastercard", "Mastercard"],
+					index: 4,
+				},
+				{
+					id: "#SK2544",
+					name: "Ronald Taylor",
+					date: "04 Oct, 2019",
+					total: "$404",
+					status: "Refund",
+					payment: ["fa-cc-visa", "Visa"],
+					index: 5,
+				},
+				{
+					id: "#SK2545",
+					name: "Jacob Hunter",
+					date: "04 Oct, 2019",
+					total: "$392",
+					status: "Paid",
+					payment: ["fab fa-cc-paypal", "Paypal"],
+					index: 6,
+				},
+			],
+		};
+	},
+	methods: {
+		...mapActions("categorie", ["addCategorie", "getCategorie"]),
+		getValidationState({ dirty, validated, valid = null }) {
+			return dirty || validated ? valid : null;
+		},
+		async add() {
+			this.isloading = !this.isloading;
+			console.log(this.categorie);
+			return this.addCategorie(this.categorie)
+				.then((result) => {
+					this.isloading = !this.isloading;
+					this.$toast("Une categorie a été ajouté", { icon: false });
+					setTimeout(() => {
+						this.showList = !this.showList;
+						this.reset();
+					}, 2000);
+				})
+				.catch((err) => {
+					this.isloading = !this.isloading;
+					this.$toast("Impossible d'ajouter a une categorie", {
+						icon: true,
+						type: "error",
 					});
-			},
-			reset() {
-				this.categorie = {
-					couleur: "",
-					nom: "",
-					emission: "",
-					caption: "",
-				};
-				this.$nextTick(() => {
-					this.$refs.observer.reset();
 				});
-			},
-			goBack() {
-				this.showList = !this.showList;
-			},
 		},
-	};
+		reset() {
+			this.categorie = {
+				couleur: "",
+				nom: "",
+				emission: "",
+				caption: "",
+			};
+			this.$nextTick(() => {
+				this.$refs.observer.reset();
+			});
+		},
+		goBack() {
+			this.showList = !this.showList;
+		},
+	},
+};
 </script>
