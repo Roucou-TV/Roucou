@@ -180,7 +180,6 @@ const actions = {
   },
 
   addCategorie({ commit }, category) {
-    console.log(category);
     return firestore
       .collection("categories")
       .add(category)

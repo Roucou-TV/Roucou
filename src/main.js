@@ -57,7 +57,6 @@ extend("required", {
 });
 extend("isDifferent", {
   validate(value, { otherVal }) {
-    // console.log("Les deux mots de passe doivent correspondrent: ", pass1);
     return value != otherVal;
   },
   params: ["otherVal"],

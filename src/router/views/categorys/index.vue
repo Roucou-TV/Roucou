@@ -321,7 +321,6 @@ export default {
 		},
 		async add() {
 			this.isloading = !this.isloading;
-			console.log(this.categorie);
 			return this.addCategorie(this.categorie)
 				.then((result) => {
 					this.isloading = !this.isloading;
