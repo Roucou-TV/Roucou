@@ -23,4 +23,10 @@ export const menuItems = [
     isTitle: false,
     link: "/users"
   },
+  {
+    id: 4,
+    label: "menuitems.notifications.text",
+    isTitle: false,
+    link: "/notifications"
+  },
 ];

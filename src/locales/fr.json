@@ -80,6 +80,9 @@
     "user": {
       "text": "Users"
     },
+    "notifications": {
+      "text": "Notifications"
+    },
     "dashboards": {
       "text": "Tableaux de bord",
       "badge": "03",

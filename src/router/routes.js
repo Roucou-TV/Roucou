@@ -28,6 +28,14 @@ export default [
     component: () => import("./views/channels/index")
   },
   {
+    path: "/notifications",
+    name: "notifications",
+    meta: {
+      authRequired: false // a changer en cas de mise en production
+    },
+    component: () => import("./views/notifications/index")
+  },
+  {
     path: "/test",
     name: "test",
     meta: {
